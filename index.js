@@ -3,14 +3,20 @@ import mongoose from 'mongoose';
 import userRouter from './routes/userRouter.js';
 import productRouter from './routes/productRouter.js';
 import jwt from 'jsonwebtoken';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
-const mongoURI = "mongodb+srv://admin:1234@cluster0.qg5oqcu.mongodb.net/?appName=Cluster0"
+dotenv.config();
+
+const mongoURI = process.env.MongoURI;
 
 mongoose.connect(mongoURI).then(()=>{
     console.log("Connected to MongoDB Cluster0");
 })
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -26,7 +32,7 @@ app.use(
             console.log(token);
 
             //decryption method
-            jwt.verify(token,"securityKey96$2025",//token and security key that we used for encryption and verify karala iwara unma karnna one de
+            jwt.verify(token,process.env.JWT_SECRET,//token and security key that we used for encryption and verify karala iwara unma karnna one de
                 (error,content)=>{
                     if(content == null){
                         console.log("Invalid token");
@@ -54,9 +60,9 @@ app.use(
     
     });
 
-app.use("/users", userRouter);
+app.use("/api/users", userRouter);
 
-app.use("/products", productRouter);
+app.use("/api/products", productRouter);
 
 
 app.get("/",(req,res)=>{
@@ -105,8 +111,8 @@ app.put("/",(req,res)=>{
     });
 }) 
 
-app.listen(5000,() => {
-    console.log("Server started on port 5000");
+app.listen(3000,() => {
+    console.log("Server started on port 3000");
 })
 
 // function start(){

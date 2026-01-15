@@ -60,11 +60,12 @@ export function loginUser(req,res){
                         image: user.image
                     }
 
-                    const token = jwt.sign(payload,"securityKey96$2025");//Data and scret key awasha nam expire time ekk danna puluwan,{expiresIn: '1h'}
+                    const token = jwt.sign(payload,process.env.JWT_SECRET);//Data and scret key awasha nam expire time ekk danna puluwan,{expiresIn: '1h'}
 
                     res.json({
                         message: "Login successful",
-                        token: token
+                        token: token,
+                        role: user.role
                     });
                 }else{
                     res.status(401).json({
