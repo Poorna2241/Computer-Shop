@@ -29,7 +29,7 @@ app.use(
 
             const token = authorizationHeader.replace("Bearer ","");
 
-            console.log(token);
+            // console.log(token);
 
             //decryption method
             jwt.verify(token,process.env.JWT_SECRET,//token and security key that we used for encryption and verify karala iwara unma karnna one de

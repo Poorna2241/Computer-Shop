@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
     {
-        productID: {
+        productId: {
             type: String,
             required: true,
             unique: true
@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
-        labelprice : {
+        labelPrice : {
             type: Number,
             required: true
         },
@@ -35,10 +35,15 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        model: {
+            type: String,
+            required: true,
+            default: "standard"
+        },
         brand : {
             type: String,
             required: true,
-            default: "No brand"
+            default: "generic"
         },
         stock : {   
             type: Number,
