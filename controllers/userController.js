@@ -77,6 +77,13 @@ export function loginUser(req,res){
             }else{
                 const user = users[0];
 
+                if(user.isBlocked){
+                    res.status(403).json({
+                        message: "Your account is blocked. Please contact support."
+                    });
+                    return;
+                }
+
                 const isPasswordCorrect = bcrypt.compareSync(password, user.password);//user dan ewapu password, usergr db eke password eka
 
                 if(isPasswordCorrect){
@@ -146,6 +153,17 @@ export function isAdmin(req){
 
 }
 
+export function getUser(req, res) {
+	if (req.user == null) {
+		res.status(401).json({
+			message: "Unauthorized",
+		});
+		return;
+	}
+
+	res.json(req.user);
+}
+
 export async function googleLogin(req,res){
 
     try{
@@ -190,6 +208,13 @@ export async function googleLogin(req,res){
                     role: newuser.role
                 });
         }else{
+            if(users.isBlocked){
+                res.status(403).json({
+                    message: "Your account is blocked. Please contact support."
+                });
+                return;
+            }
+            
             //generate token
             const payload = {
                 email: users.email,
@@ -315,6 +340,62 @@ export async function sendOTP(req,res){
 
 
 }
+
+export async function getAllUsers(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Access denied. Admins only can view all users."
+        });
+        return;
+    }
+ 
+    try {
+        const users = await User.find()// Exclude password field
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving users",
+            error: error.message
+        });
+    }
+
+}
+export async function updateUserStatus(req, res) {
+	if (!isAdmin(req)) {
+		res.status(401).json({
+			message: "Unauthorized",
+		});
+		return;
+	}
+
+	const email = req.params.email;
+
+	if(req.user.email === email){
+		res.status(400).json({
+			message : "Admin cannot change their own status"
+		})
+		return
+	}
+
+	const isBlocked = req.body.isBlocked;
+
+	try {
+		await User.updateOne(
+			{ email: email },
+			{ $set: { isBlocked: isBlocked } }
+		);
+		res.json({
+			message: "User status updated successfully",
+		});
+	}
+	catch (error) {
+		res.status(500).json({
+			message: "Error updating user status",
+			error: error.message,
+		});
+	}
+}
+
 
 
 
