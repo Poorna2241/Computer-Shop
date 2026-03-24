@@ -18,10 +18,30 @@ export function createProduct(req,res){
             message: "Product created successfully"
         });
     }).catch((error)=>{
-        res.status(500).json({
-            message: "Error creating product",
-            error: error.message
-        })}) 
+        // res.status(500).json({
+        //     message: "Error creating product",
+        //     error: error.message
+        // })
+
+    //         toast.error("Error adding product");
+
+    // console.log("FULL ERROR:");
+    // console.log(err);
+
+    // if(err.response){
+    //     console.log("SERVER RESPONSE:");
+    //     console.log(err.response.data);
+    // }
+
+    console.log("FULL ERROR:");
+    console.log(error);
+
+    res.status(500).json({
+        message: "Error creating product",
+        error: error.message
+    });
+    }
+    ) 
     
 
 }
@@ -143,4 +163,23 @@ export function getProductById(req,res){
     });
 
     
+}
+
+export async function searchProducts(req,res){
+    const query = req.params.query;
+    try {
+        const products = await Product.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { altNames: { $elemMatch: { $regex: query, $options: 'i' } } }
+            ],
+            isAvailable: true
+        });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error searching products",
+            error: error.message
+        });
+    }
 }
