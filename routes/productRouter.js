@@ -1,9 +1,11 @@
 import express from 'express';
-import { createProduct, getAllProducts,deleteProduct, updateProduct,getProductById } from "../controllers/productController.js";
+import { createProduct, getAllProducts,deleteProduct, updateProduct,getProductById, searchProducts } from "../controllers/productController.js";
 
 const productRouter = express.Router();
 
 productRouter.post("/",createProduct);
+
+productRouter.get("/search/:query",searchProducts); 
 
 productRouter.get("/",getAllProducts);
 
@@ -19,5 +21,7 @@ productRouter.get("/:productID",getProductById);
 productRouter.delete("/:productID",deleteProduct);//: kiyanne agta dala ewnne value ekk kiyala
 
 productRouter.put("/:productID",updateProduct); 
+
+
 
 export default productRouter;
